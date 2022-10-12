@@ -2,8 +2,18 @@ import numpy as np
 
 import config
 
+class DataPub:
+    def __init__(self, name, time_rollover=False):
+        self.observers = []
+        self.name = name
 
-class Series:
+    def add_observer(self, dashboard_item):
+        self.observers.append(dashboard_item)
+
+    def remove_observer(self, dashboard_item):
+        self.observers = [observer for observer in self.observers if observer != dashboard_item]
+
+class NumericPub(DataPub):
     """
     Stores and downsamples the datapoints of a single series
     """
@@ -24,19 +34,6 @@ class Series:
         self.time_offset = 0
 
         self.callback = None
-
-    def add_observer(self, dashboard_item):
-        """
-        An observer is a dashboard item that cares
-        about data updates. Adding an observer
-        means adding an item to be notified
-        when the data is updated
-        """
-        self.observers.append(dashboard_item)
-
-    def remove_observer(self, dashboard_item):
-        # certainly not the fastest code
-        self.observers = [observer for observer in self.observers if observer != dashboard_item]
 
     def add(self, time, point, desc=None):
         """
@@ -77,7 +74,7 @@ class Series:
         return self.sum / self.avgSize
 
 
-class CanMsgSeries(Series):
+class CanPub(DataPub):
 
     def __init__(self, name):
         self.observers = []
@@ -85,19 +82,6 @@ class CanMsgSeries(Series):
         self.payloadQ = []
 
         self.callback = None
-
-    def add_observer(self, dashboard_item):
-        """
-        An observer is a dashboard item that cares
-        about data updates. Adding an observer
-        means adding an item to be notified
-        when the data is updated
-        """
-        self.observers.append(dashboard_item)
-
-    def remove_observer(self, dashboard_item):
-        # certainly not the fastest code
-        self.observers = [observer for observer in self.observers if observer != dashboard_item]
 
     def add(self, payload):
         """

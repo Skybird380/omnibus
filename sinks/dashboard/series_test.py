@@ -1,7 +1,7 @@
 import pytest
 
 import config
-from series import Series
+from series import NumericPub
 
 
 class TestSeries:
@@ -11,7 +11,7 @@ class TestSeries:
         monkeypatch.setattr(config, "GRAPH_DURATION", 10)
 
     def test_no_downsample(self):
-        s = Series("NAME")
+        s = NumericPub("NAME")
         s.add(1/10, 1)
         assert s.points[-2] == 1  # make sure we back-fill()ed the array
         assert s.points[-1] == 1
@@ -21,7 +21,7 @@ class TestSeries:
         assert s.points[-1] == 2
 
     def test_downsample(self):
-        s = Series("NAME")
+        s = NumericPub("NAME")
         s.add(1/20, 1)  # downsampled away
         s.add(2/20, 2)
         assert s.points[-2] == 2
